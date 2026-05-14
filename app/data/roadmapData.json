@@ -1,0 +1,62 @@
+[
+  {
+    "roadmap_title": "Full Stack Web Development",
+    "category": "Development",
+    "total_edcoins": 1200,
+    "total_time": 2700
+  },
+  {
+    "roadmap_title": "UI/UX Design Basics",
+    "category": "Design",
+    "total_edcoins": 800,
+    "total_time": 1800
+  },
+  {
+    "roadmap_title": "Digital Marketing Mastery",
+    "category": "Marketing",
+    "total_edcoins": 950,
+    "total_time": 1680
+  },
+  {
+    "roadmap_title": "React Native App Development",
+    "category": "Mobile Development",
+    "total_edcoins": 1400,
+    "total_time": 3000
+  },
+  {
+    "roadmap_title": "Data Structures & Algorithms",
+    "category": "Programming",
+    "total_edcoins": 1600,
+    "total_time": 3600
+  },
+  {
+    "roadmap_title": "Cloud Computing Fundamentals",
+    "category": "Cloud",
+    "total_edcoins": 1100,
+    "total_time": 2100
+  },
+  {
+    "roadmap_title": "AI & Machine Learning",
+    "category": "Artificial Intelligence",
+    "total_edcoins": 2000,
+    "total_time": 4500
+  },
+  {
+    "roadmap_title": "Cyber Security Essentials",
+    "category": "Security",
+    "total_edcoins": 1250,
+    "total_time": 2400
+  },
+  {
+    "roadmap_title": "DevOps Engineering",
+    "category": "DevOps",
+    "total_edcoins": 1500,
+    "total_time": 3300
+  },
+  {
+    "roadmap_title": "Blockchain Development",
+    "category": "Web3",
+    "total_edcoins": 1700,
+    "total_time": 3900
+  }
+]
