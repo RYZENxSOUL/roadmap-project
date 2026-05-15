@@ -1,11 +1,20 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const roadmapSchema = new mongoose.Schema({
-  roadmap_title: String,
-  category: String,
-  total_edcoins: Number,
-  total_time: Number,
-});
+const RoadmapSchema =
+  new mongoose.Schema({
+    title: String,
+    category: String,
+    level: String,
+    duration: String,
+    time: String,
+    edcoins: Number,
+    sort: Number,
+    action: String,
+  });
 
-export default mongoose.models.Roadmap || 
-  mongoose.model('Roadmap', roadmapSchema);
+export default
+  mongoose.models.Roadmap ||
+  mongoose.model(
+    "Roadmap",
+    RoadmapSchema
+  );

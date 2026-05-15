@@ -1,62 +1,102 @@
 [
   {
-    "roadmap_title": "Full Stack Web Development",
-    "category": "Development",
-    "total_edcoins": 1200,
-    "total_time": 2700
+    "title": "AssemblyAI in Machine Learning",
+    "category": "Coding",
+    "level": "Intermediate",
+    "duration": "2–3 hours",
+    "time": "2h 15m",
+    "edcoins": 338,
+    "sort": 135,
+    "action": "Open"
   },
   {
-    "roadmap_title": "UI/UX Design Basics",
+    "title": "Illustration Mastery",
     "category": "Design",
-    "total_edcoins": 800,
-    "total_time": 1800
+    "level": "Advanced",
+    "duration": "2–3 hours",
+    "time": "2h 39m",
+    "edcoins": 398,
+    "sort": 159,
+    "action": "Open"
   },
   {
-    "roadmap_title": "Digital Marketing Mastery",
-    "category": "Marketing",
-    "total_edcoins": 950,
-    "total_time": 1680
+    "title": "Working with API - Angular",
+    "category": "Coding",
+    "level": "Basic",
+    "duration": "1–2 hours",
+    "time": "1h 10m",
+    "edcoins": 175,
+    "sort": 70,
+    "action": "Open"
   },
   {
-    "roadmap_title": "React Native App Development",
-    "category": "Mobile Development",
-    "total_edcoins": 1400,
-    "total_time": 3000
+    "title": "Personal Branding Basics",
+    "category": "Soft Skills",
+    "level": "Intermediate",
+    "duration": "1–2 hours",
+    "time": "1h 48m",
+    "edcoins": 270,
+    "sort": 108,
+    "action": "Open"
   },
   {
-    "roadmap_title": "Data Structures & Algorithms",
-    "category": "Programming",
-    "total_edcoins": 1600,
-    "total_time": 3600
+    "title": "Vercel AI SDK",
+    "category": "Coding",
+    "level": "Intermediate",
+    "duration": "2–3 hours",
+    "time": "2h 25m",
+    "edcoins": 363,
+    "sort": 145,
+    "action": "Open"
   },
   {
-    "roadmap_title": "Cloud Computing Fundamentals",
-    "category": "Cloud",
-    "total_edcoins": 1100,
-    "total_time": 2100
+    "title": "Motion Graphics for Beginners",
+    "category": "Design",
+    "level": "Basic",
+    "duration": "1–2 hours",
+    "time": "1h 25m",
+    "edcoins": 213,
+    "sort": 85,
+    "action": "Open"
   },
   {
-    "roadmap_title": "AI & Machine Learning",
-    "category": "Artificial Intelligence",
-    "total_edcoins": 2000,
-    "total_time": 4500
+    "title": "State Management in Angular",
+    "category": "Coding",
+    "level": "Intermediate",
+    "duration": "1–2 hours",
+    "time": "1h 54m",
+    "edcoins": 285,
+    "sort": 114,
+    "action": "Open"
   },
   {
-    "roadmap_title": "Cyber Security Essentials",
-    "category": "Security",
-    "total_edcoins": 1250,
-    "total_time": 2400
+    "title": "Prompt Enhancement Practices",
+    "category": "Prompt Engineering",
+    "level": "Intermediate",
+    "duration": "2–3 hours",
+    "time": "2h 06m",
+    "edcoins": 315,
+    "sort": 126,
+    "action": "Open"
   },
   {
-    "roadmap_title": "DevOps Engineering",
-    "category": "DevOps",
-    "total_edcoins": 1500,
-    "total_time": 3300
+    "title": "Pathway to Prompt Engineering",
+    "category": "Prompt Engineering",
+    "level": "Advanced",
+    "duration": "3+ hours",
+    "time": "3h 39m",
+    "edcoins": 548,
+    "sort": 219,
+    "action": "Earn coins"
   },
   {
-    "roadmap_title": "Blockchain Development",
-    "category": "Web3",
-    "total_edcoins": 1700,
-    "total_time": 3900
+    "title": "Lifecycle Methods in ReactJs",
+    "category": "Coding",
+    "level": "Intermediate",
+    "duration": "1–2 hours",
+    "time": "1h 35m",
+    "edcoins": 238,
+    "sort": 95,
+    "action": "Open"
   }
 ]
