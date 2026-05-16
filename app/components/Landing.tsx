@@ -6,6 +6,7 @@ import FloatingEddy from "./FloatingEddy";
 
 import { ROADMAPS } from "../data/constants";
 import { Roadmap } from "../types/roadmap";
+import SnakeGame from "./games/SnakeGame";
 
 interface Props {
   goExplore: () => void;
@@ -103,6 +104,8 @@ export default function Landing({
           ))}
         </div>
       </section>
+
+      <SnakeGame />
 
       <FloatingEddy />
     </main>

@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
+
 export default function FloatingEddy() {
+    const [coins, setCoins] = useState(4444);
   return (
     <div className="fixed right-5 top-1/2 z-20 flex flex-col items-center gap-4">
       <div className="bg-white border-2 border-zinc-900 rounded-xl p-2 font-bold">
-        🪙 4444
+        🪙 {coins}
       </div>
 
       <button className="bg-white rounded-2xl border p-2 shadow">

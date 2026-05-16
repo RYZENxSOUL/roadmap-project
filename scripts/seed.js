@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import fs from "fs";
 
+import User from "../app/models/User.ts";
+
 dotenv.config({
   path: ".env.local",
 });
@@ -57,6 +59,37 @@ async function seedDatabase() {
 
     console.log(
       "✅ New data inserted"
+    );
+
+    await User.deleteMany({});
+
+    console.log(
+      "✅ Old users deleted"
+    );
+
+    await User.create({
+      name: "Manan",
+
+      email:
+        "mananmakwana203@gmail.com",
+
+      edcoins: 4444,
+
+      wow_games: [
+        {
+          name: "snake_eater",
+
+          attempts: 3,
+
+          last_attempt: null,
+
+          total_attempts: 0,
+        },
+      ],
+    });
+
+    console.log(
+      "✅ User inserted"
     );
 
     await mongoose.connection.close();
