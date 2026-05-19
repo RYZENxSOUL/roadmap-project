@@ -11,6 +11,9 @@ const BOARD_HEIGHT = 500;
 const PLAYER_SIZE = 32;
 const COIN_SIZE = 26;
 
+const BORDER_SIZE = 5;
+const SAFE_PADDING = 10;
+
 export default function SnakeGame() {
 
     const speed = 20;
@@ -39,11 +42,13 @@ export default function SnakeGame() {
     const [direction, setDirection] =
         useState("RIGHT");
 
-    const [playerX, setPlayerX] =
-        useState(100);
-
-    const [playerY, setPlayerY] =
-        useState(250);
+    const [snake, setSnake] =
+        useState([
+            {
+                x: 100,
+                y: 250,
+            },
+        ]);
 
     const [coinX, setCoinX] =
         useState(700);
@@ -145,15 +150,58 @@ export default function SnakeGame() {
                                 ) / 1000
                             );
 
-                        setCooldownText(
-                            `${hours
-                                .toString()
-                                .padStart(2, "0")}:${minutes
-                                    .toString()
-                                    .padStart(2, "0")}:${seconds
+                        const formatCooldown = () => {
+
+                            const nextPlay =
+                                new Date(lastAttempt).getTime() +
+                                24 * 60 * 60 * 1000;
+
+                            const updateTimer = () => {
+
+                                const remaining =
+                                    nextPlay - Date.now();
+
+                                if (remaining <= 0) {
+
+                                    setCooldownText("");
+
+                                    setAttemptsLeft(3);
+
+                                    refreshUser();
+
+                                    return;
+                                }
+
+                                const hours = Math.floor(
+                                    remaining / (1000 * 60 * 60)
+                                );
+
+                                const minutes = Math.floor(
+                                    (remaining % (1000 * 60 * 60)) /
+                                    (1000 * 60)
+                                );
+
+                                const seconds = Math.floor(
+                                    (remaining % (1000 * 60)) / 1000
+                                );
+
+                                setCooldownText(
+                                    `${hours
                                         .toString()
-                                        .padStart(2, "0")}`
-                        );
+                                        .padStart(2, "0")}:${minutes
+                                            .toString()
+                                            .padStart(2, "0")}:${seconds
+                                                .toString()
+                                                .padStart(2, "0")}`
+                                );
+                            };
+
+                            updateTimer();
+
+                            setInterval(updateTimer, 1000);
+                        };
+
+                        formatCooldown();
                     }
                 }
 
@@ -170,24 +218,12 @@ export default function SnakeGame() {
 
         refreshUser();
 
-        const interval =
-            setInterval(() => {
-
-                refreshUser();
-
-            }, 1000);
-
-        return () =>
-            clearInterval(interval);
-
     }, []);
 
     // START GAME
     const startGame = () => {
 
-        if (
-            attemptsLeft <= 0
-        )
+        if (attemptsLeft <= 0 && cooldownText)
             return;
 
         setGameStarted(true);
@@ -198,9 +234,12 @@ export default function SnakeGame() {
 
         setTimeLeft(30);
 
-        setPlayerX(100);
-
-        setPlayerY(250);
+        setSnake([
+            {
+                x: 100,
+                y: 250,
+            },
+        ]);
 
         setDirection("RIGHT");
     };
@@ -347,69 +386,78 @@ export default function SnakeGame() {
         const gameLoop =
             setInterval(() => {
 
-                setPlayerX(
-                    (
-                        prevX
-                    ) => {
+                setSnake((prevSnake) => {
 
-                        if (
-                            direction ===
-                            "LEFT"
-                        ) {
-                            return Math.max(
-                                prevX -
-                                speed,
-                                PLAYER_SIZE
-                            );
-                        }
+                    const head =
+                        prevSnake[0];
 
-                        if (
-                            direction ===
-                            "RIGHT"
-                        ) {
-                            return Math.min(
-                                prevX +
-                                speed,
-                                BOARD_WIDTH -
-                                PLAYER_SIZE
-                            );
-                        }
+                    let newX =
+                        head.x;
 
-                        return prevX;
+                    let newY =
+                        head.y;
+
+                    const MIN_X =
+                        BORDER_SIZE +
+                        SAFE_PADDING;
+
+                    const MAX_X =
+                        BOARD_WIDTH -
+                        PLAYER_SIZE -
+                        BORDER_SIZE -
+                        SAFE_PADDING;
+
+                    const MIN_Y =
+                        BORDER_SIZE +
+                        SAFE_PADDING;
+
+                    const MAX_Y =
+                        BOARD_HEIGHT -
+                        PLAYER_SIZE -
+                        BORDER_SIZE -
+                        SAFE_PADDING;
+
+                    if (direction === "LEFT") {
+                        newX -= speed;
                     }
-                );
 
-                setPlayerY(
-                    (
-                        prevY
-                    ) => {
-
-                        if (
-                            direction ===
-                            "UP"
-                        ) {
-                            return Math.max(
-                                prevY -
-                                speed,
-                                PLAYER_SIZE
-                            );
-                        }
-
-                        if (
-                            direction ===
-                            "DOWN"
-                        ) {
-                            return Math.min(
-                                prevY +
-                                speed,
-                                BOARD_HEIGHT -
-                                PLAYER_SIZE
-                            );
-                        }
-
-                        return prevY;
+                    if (direction === "RIGHT") {
+                        newX += speed;
                     }
-                );
+
+                    if (direction === "UP") {
+                        newY -= speed;
+                    }
+
+                    if (direction === "DOWN") {
+                        newY += speed;
+                    }
+
+                    newX = Math.max(
+                        MIN_X,
+                        Math.min(newX, MAX_X)
+                    );
+
+                    newY = Math.max(
+                        MIN_Y,
+                        Math.min(newY, MAX_Y)
+                    );
+
+                    const newHead = {
+                        x: newX,
+                        y: newY,
+                    };
+
+                    const newSnake = [
+                        newHead,
+                        ...prevSnake.slice(
+                            0,
+                            prevSnake.length - 1
+                        ),
+                    ];
+
+                    return newSnake;
+                });
 
             }, 40);
 
@@ -433,13 +481,16 @@ export default function SnakeGame() {
         if (gameOver)
             return;
 
+        const head =
+            snake[0];
+
         const hitCoin =
             Math.abs(
-                playerX -
+                head.x -
                 coinX
             ) < 35 &&
             Math.abs(
-                playerY -
+                head.y -
                 coinY
             ) < 35;
 
@@ -450,6 +501,19 @@ export default function SnakeGame() {
             (prev) =>
                 prev + 20
         );
+
+        setSnake((prevSnake) => {
+
+            const tail =
+                prevSnake[
+                prevSnake.length - 1
+                ];
+
+            return [
+                ...prevSnake,
+                tail,
+            ];
+        });
 
         setCoinX(
             Math.floor(
@@ -466,8 +530,7 @@ export default function SnakeGame() {
         );
 
     }, [
-        playerX,
-        playerY,
+        snake,
         coinX,
         coinY,
         gameStarted,
@@ -543,14 +606,23 @@ export default function SnakeGame() {
                 Play Games earn edCoins
             </h2>
 
-            <div className="relative mx-auto mt-10 max-w-6xl rounded-[40px] bg-[#1D2D7B] p-10">
+            <div
+                className="relative mx-auto mt-10 rounded-[40px] bg-[#1D2D7B] p-10"
+                style={{
+                    width: BOARD_WIDTH + 80,
+                }}
+            >
 
                 {/* TOP BAR */}
                 <div className="absolute right-8 top-8 z-50 flex items-center gap-4">
 
                     {!gameStarted && (
                         <div className="rounded-full bg-black px-5 py-3 text-xl font-black text-yellow-400 shadow-[0_0_20px_rgba(255,215,0,0.4)]">
-                            {attemptsLeft}/3 left
+                            {attemptsLeft > 0
+                                ? `${attemptsLeft}/3 left`
+                                : cooldownText
+                                    ? "0/3 left"
+                                    : "3/3 left"}
                         </div>
                     )}
 
@@ -576,51 +648,64 @@ export default function SnakeGame() {
                 {/* START SCREEN */}
                 {!gameStarted ? (
 
-                    <div className="flex h-[500px] items-center justify-center rounded-[40px] border-[5px] border-black bg-[#02102F]">
+                    <div
+                        className="relative overflow-hidden rounded-[40px] border-[5px] border-black bg-[#02102F]"
+                        style={{
+                            width: BOARD_WIDTH,
+                            height: BOARD_HEIGHT,
+                        }}
+                    >
+                        <div className="flex h-full items-center justify-center">
 
-                        <div className="rounded-[40px] bg-gradient-to-br from-[#F4F1E6] to-[#D9D5C9] px-16 py-14 text-center shadow-2xl">
+                            <div className="rounded-[40px] bg-gradient-to-br from-[#F4F1E6] to-[#D9D5C9] px-16 py-14 text-center shadow-2xl">
 
-                            <h2 className="text-5xl font-black text-[#151B3B]">
-                                Snake Eater
-                            </h2>
+                                <h2 className="text-5xl font-black text-[#151B3B]">
+                                    Snake Eater
+                                </h2>
 
-                            <ul className="mt-8 space-y-4 text-left text-xl text-zinc-600">
+                                <ul className="mt-8 space-y-4 text-left text-xl text-zinc-600">
 
-                                <li>
-                                    • Collect coins
-                                </li>
+                                    <li>
+                                        • Collect coins
+                                    </li>
 
-                                <li>
-                                    • 30 seconds gameplay
-                                </li>
+                                    <li>
+                                        • 30 seconds gameplay
+                                    </li>
 
-                                <li>
-                                    • Arrow keys movement
-                                </li>
+                                    <li>
+                                        • Arrow keys movement
+                                    </li>
 
-                                <li>
-                                    • Earn edCoins
-                                </li>
+                                    <li>
+                                        • Earn edCoins
+                                    </li>
 
-                            </ul>
+                                </ul>
 
-                            <button
-                                onClick={
-                                    startGame
-                                }
-                                disabled={
-                                    attemptsLeft <=
-                                    0
-                                }
-                                className="mt-10 rounded-full bg-[#111827] px-10 py-4 text-2xl font-black text-yellow-400 transition hover:scale-105 disabled:opacity-40"
-                            >
-                                {attemptsLeft >
-                                    0
-                                    ? `Play X ${attemptsLeft}`
-                                    : cooldownText
-                                        ? cooldownText
-                                        : "No Attempts"}
-                            </button>
+                                {attemptsLeft > 0 ? (
+                                    <button
+                                        onClick={startGame}
+                                        className="mt-10 rounded-full bg-[#111827] px-10 py-4 text-2xl font-black text-yellow-400 transition hover:scale-105"
+                                    >
+                                        Play X {attemptsLeft}
+                                    </button>
+                                ) : cooldownText ? (
+                                    <button
+                                        disabled
+                                        className="mt-10 rounded-full bg-gray-500 px-10 py-4 text-2xl font-black text-yellow-200"
+                                    >
+                                        {cooldownText}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={startGame}
+                                        className="mt-10 rounded-full bg-[#111827] px-10 py-4 text-2xl font-black text-yellow-400 transition hover:scale-105"
+                                    >
+                                        Play X 3
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -649,31 +734,32 @@ export default function SnakeGame() {
                         <div
                             className="absolute rounded-full bg-yellow-400 shadow-[0_0_30px_#FFD700]"
                             style={{
-                                width:
-                                    COIN_SIZE,
-                                height:
-                                    COIN_SIZE,
-                                left: coinX,
-                                top: coinY,
-                                transform:
-                                    "translate(-50%, -50%)",
+                                width: `${COIN_SIZE}px`,
+                                height: `${COIN_SIZE}px`,
+                                left: `${coinX}px`,
+                                top: `${coinY}px`,
                             }}
                         />
 
                         {/* PLAYER */}
-                        <div
-                            className="absolute rounded-lg bg-[#00D95F] shadow-[0_0_20px_#00FF88]"
-                            style={{
-                                width:
-                                    PLAYER_SIZE,
-                                height:
-                                    PLAYER_SIZE,
-                                left: playerX,
-                                top: playerY,
-                                transform:
-                                    "translate(-50%, -50%)",
-                            }}
-                        />
+                        {snake.map(
+                            (
+                                segment,
+                                index
+                            ) => (
+
+                                <div
+                                    key={index}
+                                    className="absolute rounded-lg bg-[#00D95F] shadow-[0_0_6px_#00FF88]"
+                                    style={{
+                                        left: `${segment.x}px`,
+                                        top: `${segment.y}px`,
+                                        width: `${PLAYER_SIZE}px`,
+                                        height: `${PLAYER_SIZE}px`,
+                                    }}
+                                />
+                            )
+                        )}
 
                         {/* GAME OVER */}
                         {gameOver && (
