@@ -167,8 +167,6 @@ export default function SnakeGame() {
 
                                     setAttemptsLeft(3);
 
-                                    refreshUser();
-
                                     return;
                                 }
 
