@@ -8,15 +8,13 @@ import {
 const BOARD_WIDTH = 1000;
 const BOARD_HEIGHT = 500;
 
-const PLAYER_SIZE = 32;
+const CELL_SIZE = 40;
 const COIN_SIZE = 26;
 
 const BORDER_SIZE = 5;
 const SAFE_PADDING = 10;
 
 export default function SnakeGame() {
-
-    const speed = 20;
 
     const [score, setScore] =
         useState(0);
@@ -42,12 +40,14 @@ export default function SnakeGame() {
     const [direction, setDirection] =
         useState("RIGHT");
 
+    const SEGMENT_SIZE = 48;
+
     const [snake, setSnake] =
         useState([
-            {
-                x: 100,
-                y: 250,
-            },
+            { x: 260, y: 240 },
+            { x: 212, y: 240 },
+            { x: 164, y: 240 },
+            { x: 116, y: 240 },
         ]);
 
     const [coinX, setCoinX] =
@@ -233,10 +233,10 @@ export default function SnakeGame() {
         setTimeLeft(30);
 
         setSnake([
-            {
-                x: 100,
-                y: 250,
-            },
+            { x: 260, y: 240 },
+            { x: 212, y: 240 },
+            { x: 164, y: 240 },
+            { x: 116, y: 240 },
         ]);
 
         setDirection("RIGHT");
@@ -293,66 +293,57 @@ export default function SnakeGame() {
     // KEYBOARD
     useEffect(() => {
 
-        const handleKeyDown =
-            (
-                e: KeyboardEvent
-            ) => {
+        const handleKeyDown = (
+            e: KeyboardEvent
+        ) => {
+
+            if (
+                [
+                    "ArrowUp",
+                    "ArrowDown",
+                    "ArrowLeft",
+                    "ArrowRight",
+                ].includes(e.key)
+            ) {
+                e.preventDefault();
+            }
+
+            if (!gameStarted || gameOver)
+                return;
+
+            setDirection((prev) => {
 
                 if (
-                    [
-                        "ArrowUp",
-                        "ArrowDown",
-                        "ArrowLeft",
-                        "ArrowRight",
-                    ].includes(
-                        e.key
-                    )
+                    e.key === "ArrowLeft" &&
+                    prev !== "RIGHT"
                 ) {
-                    e.preventDefault();
-                }
-
-                if (!gameStarted)
-                    return;
-
-                if (gameOver)
-                    return;
-
-                if (
-                    e.key ===
-                    "ArrowLeft"
-                ) {
-                    setDirection(
-                        "LEFT"
-                    );
+                    return "LEFT";
                 }
 
                 if (
-                    e.key ===
-                    "ArrowRight"
+                    e.key === "ArrowRight" &&
+                    prev !== "LEFT"
                 ) {
-                    setDirection(
-                        "RIGHT"
-                    );
+                    return "RIGHT";
                 }
 
                 if (
-                    e.key ===
-                    "ArrowUp"
+                    e.key === "ArrowUp" &&
+                    prev !== "DOWN"
                 ) {
-                    setDirection(
-                        "UP"
-                    );
+                    return "UP";
                 }
 
                 if (
-                    e.key ===
-                    "ArrowDown"
+                    e.key === "ArrowDown" &&
+                    prev !== "UP"
                 ) {
-                    setDirection(
-                        "DOWN"
-                    );
+                    return "DOWN";
                 }
-            };
+
+                return prev;
+            });
+        };
 
         window.addEventListener(
             "keydown",
@@ -367,102 +358,86 @@ export default function SnakeGame() {
             );
         };
 
-    }, [
-        gameStarted,
-        gameOver,
-    ]);
+    }, [gameStarted, gameOver]);
 
     // GAME LOOP
     useEffect(() => {
 
-        if (!gameStarted)
-            return;
+        if (!gameStarted) return;
 
-        if (gameOver)
-            return;
+        if (gameOver) return;
 
-        const gameLoop =
-            setInterval(() => {
+        const gameLoop = setInterval(() => {
 
-                setSnake((prevSnake) => {
+            setSnake((prevSnake) => {
 
-                    const head =
-                        prevSnake[0];
+                const newSnake = [...prevSnake];
 
-                    let newX =
-                        head.x;
+                const head = {
+                    ...newSnake[0]
+                };
 
-                    let newY =
-                        head.y;
+                // MOVEMENT
+                if (direction === "RIGHT") {
+                    head.x += 40;
+                }
 
-                    const MIN_X =
-                        BORDER_SIZE +
-                        SAFE_PADDING;
+                if (direction === "LEFT") {
+                    head.x -= 40;
+                }
 
-                    const MAX_X =
-                        BOARD_WIDTH -
-                        PLAYER_SIZE -
-                        BORDER_SIZE -
-                        SAFE_PADDING;
+                if (direction === "UP") {
+                    head.y -= 40;
+                }
 
-                    const MIN_Y =
-                        BORDER_SIZE +
-                        SAFE_PADDING;
+                if (direction === "DOWN") {
+                    head.y += 40;
+                }
 
-                    const MAX_Y =
-                        BOARD_HEIGHT -
-                        PLAYER_SIZE -
-                        BORDER_SIZE -
-                        SAFE_PADDING;
+                // WALL LIMITS
+                const MIN_X = 0;
+                const MAX_X = BOARD_WIDTH - SEGMENT_SIZE;
 
-                    if (direction === "LEFT") {
-                        newX -= speed;
-                    }
+                const MIN_Y = 0;
+                const MAX_Y = BOARD_HEIGHT - SEGMENT_SIZE;
 
-                    if (direction === "RIGHT") {
-                        newX += speed;
-                    }
+                if (head.x < MIN_X) {
+                    head.x = MIN_X;
+                }
 
-                    if (direction === "UP") {
-                        newY -= speed;
-                    }
+                if (head.x > MAX_X) {
+                    head.x = MAX_X;
+                }
 
-                    if (direction === "DOWN") {
-                        newY += speed;
-                    }
+                if (head.y < MIN_Y) {
+                    head.y = MIN_Y;
+                }
 
-                    newX = Math.max(
-                        MIN_X,
-                        Math.min(newX, MAX_X)
-                    );
+                if (head.y > MAX_Y) {
+                    head.y = MAX_Y;
+                }
 
-                    newY = Math.max(
-                        MIN_Y,
-                        Math.min(newY, MAX_Y)
-                    );
-
-                    const newHead = {
-                        x: newX,
-                        y: newY,
+                // MOVE BODY
+                for (
+                    let i = newSnake.length - 1;
+                    i > 0;
+                    i--
+                ) {
+                    newSnake[i] = {
+                        ...newSnake[i - 1]
                     };
+                }
 
-                    const newSnake = [
-                        newHead,
-                        ...prevSnake.slice(
-                            0,
-                            prevSnake.length - 1
-                        ),
-                    ];
+                newSnake[0] = head;
 
-                    return newSnake;
-                });
+                return newSnake;
 
-            }, 40);
+            });
+
+        }, 90);
 
         return () =>
-            clearInterval(
-                gameLoop
-            );
+            clearInterval(gameLoop);
 
     }, [
         direction,
@@ -503,27 +478,28 @@ export default function SnakeGame() {
         setSnake((prevSnake) => {
 
             const tail =
-                prevSnake[
-                prevSnake.length - 1
-                ];
+                prevSnake[prevSnake.length - 1];
 
             return [
                 ...prevSnake,
-                tail,
+                {
+                    x: tail.x,
+                    y: tail.y,
+                },
             ];
         });
 
         setCoinX(
             Math.floor(
                 Math.random() *
-                900
+                (BOARD_WIDTH - 120)
             ) + 40
         );
 
         setCoinY(
             Math.floor(
                 Math.random() *
-                420
+                (BOARD_HEIGHT - 120)
             ) + 40
         );
 
@@ -710,12 +686,14 @@ export default function SnakeGame() {
                 ) : (
 
                     <div
-                        className="relative overflow-hidden rounded-[40px] border-[5px] border-black bg-[#02102F]"
+                        className="relative overflow-hidden rounded-[40px] border-[5px] border-black bg-cover bg-center bg-no-repeat"
                         style={{
                             width:
                                 BOARD_WIDTH,
                             height:
                                 BOARD_HEIGHT,
+                            backgroundImage:
+                                "url('/snake/background.svg')",
                         }}
                     >
 
@@ -730,34 +708,136 @@ export default function SnakeGame() {
 
                         {/* COIN */}
                         <div
-                            className="absolute rounded-full bg-yellow-400 shadow-[0_0_30px_#FFD700]"
+                            className="absolute"
                             style={{
-                                width: `${COIN_SIZE}px`,
-                                height: `${COIN_SIZE}px`,
                                 left: `${coinX}px`,
                                 top: `${coinY}px`,
                             }}
-                        />
+                        >
+                            <img
+                                src="/snake/coin.svg"
+                                alt="coin"
+                                className="h-[48px] w-[48px] drop-shadow-[0_0_20px_gold]"
+                            />
+
+                            <div className="absolute inset-0 flex items-center justify-center text-[13px] font-black text-[#1E2230]">
+                                20
+                            </div>
+                        </div>
 
                         {/* PLAYER */}
-                        {snake.map(
-                            (
-                                segment,
-                                index
-                            ) => (
+                        {!gameOver &&
+                            snake.map((segment, index) => {
 
-                                <div
-                                    key={index}
-                                    className="absolute rounded-lg bg-[#00D95F] shadow-[0_0_6px_#00FF88]"
-                                    style={{
-                                        left: `${segment.x}px`,
-                                        top: `${segment.y}px`,
-                                        width: `${PLAYER_SIZE}px`,
-                                        height: `${PLAYER_SIZE}px`,
-                                    }}
-                                />
-                            )
-                        )}
+                                const isHead = index === 0;
+
+                                const isTail =
+                                    index === snake.length - 1;
+
+                                let image = "/snake/body1.svg";
+
+                                if (isHead) {
+                                    image = "/snake/head.svg";
+                                } else if (isTail) {
+                                    image = "/snake/tail.svg";
+                                } else {
+
+                                    const bodyImages = [
+                                        "/snake/body1.svg",
+                                        "/snake/body2.svg",
+                                        "/snake/body3.svg",
+                                        "/snake/body4.svg",
+                                    ];
+
+                                    image =
+                                        bodyImages[
+                                        index %
+                                        bodyImages.length
+                                        ];
+                                }
+
+                                let rotation = 0;
+
+                                // HEAD ROTATION
+                                if (isHead) {
+
+                                    if (direction === "RIGHT") {
+                                        rotation = 0;
+                                    }
+
+                                    if (direction === "LEFT") {
+                                        rotation = 180;
+                                    }
+
+                                    if (direction === "UP") {
+                                        rotation = -90;
+                                    }
+
+                                    if (direction === "DOWN") {
+                                        rotation = 90;
+                                    }
+                                }
+
+                                // TAIL ROTATION
+                                if (isTail && snake.length > 1) {
+
+                                    const beforeTail =
+                                        snake[index - 1];
+
+                                    const dx =
+                                        segment.x - beforeTail.x;
+
+                                    const dy =
+                                        segment.y - beforeTail.y;
+
+                                    if (dx > 0) {
+                                        rotation = 0;
+                                    }
+
+                                    if (dx < 0) {
+                                        rotation = 180;
+                                    }
+
+                                    if (dy > 0) {
+                                        rotation = 90;
+                                    }
+
+                                    if (dy < 0) {
+                                        rotation = -90;
+                                    }
+                                }
+
+                                return (
+
+                                    <img
+                                        key={index}
+                                        src={image}
+                                        alt="snake"
+                                        draggable={false}
+                                        className="absolute pointer-events-none select-none"
+                                        style={{
+
+                                            left: `${segment.x - 4}px`,
+                                            top: `${segment.y - 4}px`,
+
+                                            width: isHead ? "52px" : "50px",
+                                            height: isHead ? "52px" : "50px",
+
+                                            transform:
+                                                `rotate(${rotation}deg)`,
+
+                                            transformOrigin:
+                                                "center center",
+
+                                            imageRendering:
+                                                "auto",
+
+                                            zIndex:
+                                                snake.length - index,
+                                        }}
+                                    />
+                                );
+                            })}
 
                         {/* GAME OVER */}
                         {gameOver && (
